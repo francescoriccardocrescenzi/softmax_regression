@@ -1,25 +1,17 @@
-from torchvision import transforms
-from torchvision.datasets import MNIST
-from torch.utils.data import DataLoader
-from typing import Tuple
+"""Module used to access and visualize data from the MNIST dataset."""
+import torchvision
 
 
-def get_MNIST_dataloaders(batch_size: int) -> Tuple[DataLoader, DataLoader]:
-    """Access the MNIST dataset and initialize a training dataloader and a testing dataloader with it.
+class MNIST:
+    def __init__(self):
+        transform = torchvision.transforms.Compose([
+            torchvision.transforms.ToTensor(),
+            torchvision.transforms.Normalize((0.5,), (0.5,))
+        ])
 
-    The MNIST dataset is downloaded if not present.
+        self.training_dataset = torchvision.datasets.MNIST(root="./data", train=True, download=True, transform=transform)
+        self.testing_dataset = torchvision.datasets.MNIST(root="./data", train=False, download=True, transform=transform)
 
-    :param batch_size: batch size for the dataloaders.
-    """
-    transform = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize((0.5,), (0.5,))
-    ])
+        self.features = 28*28
+        self.classes = 10
 
-    training_dataset = MNIST(root="./data", train=True, download=True, transform=transform)
-    testing_dataset = MNIST(root="./data", train=False, download=True, transform=transform)
-
-    training_dataloader = DataLoader(training_dataset, batch_size=batch_size, shuffle=True)
-    testing_dataloader = DataLoader(testing_dataset, batch_size=batch_size, shuffle=True)
-
-    return training_dataloader, testing_dataloader
